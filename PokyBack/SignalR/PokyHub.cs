@@ -45,7 +45,7 @@ public class PokyHub : Hub
         await base.OnConnectedAsync();
     }
 
-    public override async Task OnDisconnectedAsync(Exception? exception)
+    public override async Task OnDisconnectedAsync(Exception exception)
     {
         await base.OnDisconnectedAsync(exception);
         CleanSpecificConnectionId(Context.ConnectionId);

@@ -5,7 +5,7 @@ namespace PokyBack.SignalR.Messages;
 public sealed class LogMessage : WsMessage
 {
     [JsonPropertyName("message")]
-    public string? Message { get; set; }
+    public string Message { get; set; }
     
     public LogMessage()
     {

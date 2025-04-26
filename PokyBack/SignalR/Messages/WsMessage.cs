@@ -14,13 +14,13 @@ namespace PokyBack.SignalR.Messages;
 public abstract class WsMessage
 {
     [JsonPropertyName("kind")]
-    public string? Kind { get; set; }
+    public string Kind { get; set; }
     
     [JsonPropertyName("uuid")]
-    public string? Uuid { get; set; }
+    public string Uuid { get; set; }
     
     [JsonPropertyName("roomId")]
-    public string? RoomId { get; set; }
+    public string RoomId { get; set; }
 }
 
 

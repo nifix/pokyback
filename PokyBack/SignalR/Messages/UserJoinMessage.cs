@@ -5,7 +5,7 @@ namespace PokyBack.SignalR.Messages;
 public class UserJoinMessage : WsMessage
 {
     [JsonPropertyName("username")]
-    public string? Username { get; set; }
+    public string Username { get; set; }
     
     public UserJoinMessage()
     {

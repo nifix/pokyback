@@ -5,7 +5,7 @@ namespace PokyBack.SignalR.Messages;
 public sealed class TopicUpdatedMessage : WsMessage
 {
     [JsonPropertyName("topic")]
-    public string? Topic { get; set; }
+    public string Topic { get; set; }
 
     public TopicUpdatedMessage()
     {

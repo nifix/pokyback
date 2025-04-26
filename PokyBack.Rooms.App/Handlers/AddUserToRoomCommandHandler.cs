@@ -8,7 +8,7 @@ public class AddUserToRoomCommandHandler(IRoomRepository repository) : IRequestH
 {
     public async Task<bool> Handle(AddUserToRoomCommand request, CancellationToken cancellationToken)
     {
-        var result = await repository.AddUserAsync(request.RoomId, request.Uuid, request.Username);
+        var result = await repository.AddUserAsync(request.RoomId, request.Uuid, request.Username, cancellationToken);
         return result;
     }
 }

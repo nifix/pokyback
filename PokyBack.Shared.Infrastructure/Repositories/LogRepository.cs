@@ -7,7 +7,7 @@ namespace PokyBack.Shared.Infrastructure.Repositories;
 
 public class LogRepository(AppDbContext context) : ILogRepository
 {
-    public async Task AddLog(string code, string roomCode, object? value = null, string? userUuid = null)
+    public async Task AddLog(string code, string roomCode, object? value = null, string? userUuid = null, CancellationToken cancellationToken = default)
     {
         await context.Logs.AddAsync(new Log
         {
@@ -18,6 +18,6 @@ public class LogRepository(AppDbContext context) : ILogRepository
             Value = JsonSerializer.Serialize(value)
         });
         
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
     }
 }
