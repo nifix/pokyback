@@ -1,0 +1,53 @@
+@PokyBack_HostAddress = http://localhost:5199
+
+### CreateNewRoom
+POST {{PokyBack_HostAddress}}/api/rooms
+Accept: application/json
+Content-Type: application/json
+
+{
+  "username": "Nifix rouge",
+  "uuid": "5fc51f02-35e5-4fd1-adf4-6984154c7752"
+}
+
+### AddUser
+POST {{PokyBack_HostAddress}}/api/rooms/9eb8c3c6-3b95-4887-a83a-8744b17a50bc/users
+Accept: application/json
+Content-Type: application/json
+
+{
+  "username": "Nifix rouge",
+  "uuid": "5fc51f02-35e5-4fd1-adf4-6984154c7752"
+}
+
+### GetByCode
+GET {{PokyBack_HostAddress}}/api/rooms/9eb8c3c6-3b95-4887-a83a-8744b17a50bb
+Accept: application/json
+
+### Change Reveal Status
+PUT {{PokyBack_HostAddress}}/api/rooms/9eb8c3c6-3b95-4887-a83a-8744b17a50bb/reveal
+Accept: application/json
+Content-Type: application/json
+
+{
+  "revealStatus": true
+}
+
+### Change User current pick
+PUT {{PokyBack_HostAddress}}/api/rooms/9eb8c3c6-3b95-4887-a83a-8744b17a50bb/users/5fc51f02-35e5-4fd1-adf4-6984154c7752
+Accept: application/json
+Content-Type: application/json
+
+{
+  "currentPick": 5
+}
+
+### Set topic
+PUT {{PokyBack_HostAddress}}/api/rooms/9eb8c3c6-3b95-4887-a83a-8744b17a50bb/topic
+Accept: application/json
+Content-Type: application/json
+
+{
+  "uuid": "ebfae9d9-db49-4625-973d-a04089772ad9",
+  "topic": "Friteuse ^_^"
+}
