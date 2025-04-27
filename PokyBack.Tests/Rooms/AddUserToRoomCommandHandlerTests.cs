@@ -24,10 +24,17 @@ public class AddUserToRoomCommandHandlerTests
         
         _cancellationToken = CancellationToken.None;
     }
-    
+
+    /// <summary>
+    /// Handles the AddUserToRoomCommand and adds a user to a room using the IRoomRepository.
+    /// </summary>
+    /// <param name="request">The AddUserToRoomCommand containing the room ID, user UUID, and username.</param>
+    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
+    /// <returns>True if the user was successfully added to the room; otherwise, false.</returns>
     [Fact]
-    public async Task Handle_WhenRepositoryAddsUser_ShouldCreatesUser()
+    public async Task Handle_WhenRepositoryAddsUserToKnownRoom_ShouldCreatesUser()
     {
+        // Arrange
         _mockRoomRepository
             .Setup(r => r.AddUserAsync(_targetGuid, It.IsAny<Guid>(), It.IsAny<string>(), _cancellationToken))
             .ReturnsAsync(true);
@@ -41,6 +48,29 @@ public class AddUserToRoomCommandHandlerTests
         
         // Assert
         successfulResult.Should().BeTrue();
+        roomDoesntExist.Should().BeFalse();
+    }
+
+    /// <summary>
+    /// Handles the AddUserToRoomCommand and attempts to add a user to a room using the IRoomRepository.
+    /// </summary>
+    /// <param name="request">The AddUserToRoomCommand containing the room ID, user UUID, and username.</param>
+    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
+    /// <returns>False if the repository does not add the user to the room.</returns>
+    [Fact]
+    public async Task Handle_WhenRepositoryAddsUserToUnknownRoom_ShouldNotCreatesUser()
+    {
+        // Arrange
+        _mockRoomRepository
+            .Setup(r => r.AddUserAsync(_targetGuid, It.IsAny<Guid>(), It.IsAny<string>(), _cancellationToken))
+            .ReturnsAsync(true);
+        
+        var unsuccessfulCommand = new AddUserToRoomCommand(Guid.NewGuid(),_targetUuid, string.Empty);
+        
+        // Act
+        var roomDoesntExist = await _handlerTests.Handle(unsuccessfulCommand, _cancellationToken);
+        
+        // Assert
         roomDoesntExist.Should().BeFalse();
     }
 }
