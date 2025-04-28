@@ -8,6 +8,6 @@ public class SetRevealStatusCommandHandler(IRoomRepository roomRepository) : IRe
 {
     public async Task<bool> Handle(SetRevealStatusCommand request, CancellationToken cancellationToken)
     {
-        return await roomRepository.SetRevealStatusAsync(request.roomCode, request.revealStatus, cancellationToken);
+        return await roomRepository.SetRevealStatusAsync(request.RoomCode, request.RevealStatus, cancellationToken);
     }
 }

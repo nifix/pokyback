@@ -27,7 +27,17 @@ public class Room : EntityBase
         });
         
         AddLog("user_joined", Code, userUuid: uuid.ToString());
-    }    
+    }
+
+    /// <summary>
+    /// Adds a user to the room.
+    /// </summary>
+    /// <param name="uuid">The unique identifier of the user.</param>
+    public void RemoveUser(Guid uuid)
+    {
+        RoomUsers.Remove(RoomUsers.SingleOrDefault(x => x.Uuid == uuid));
+        AddLog("user_removed", Code, userUuid: uuid.ToString());
+    }   
     
     /// <summary>
     /// Sets the reveal status of the room.
@@ -62,6 +72,7 @@ public class Room : EntityBase
         CreatedAt = DateTime.Now;
         CreatedBy = username;
         CreatedByUuid = uuid.ToString();
+        Topic = "No topic set";
         
         // Add Log
         AddLog("room_created", Code, userUuid: CreatedByUuid);

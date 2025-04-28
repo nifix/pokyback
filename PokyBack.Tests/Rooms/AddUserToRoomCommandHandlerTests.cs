@@ -3,7 +3,6 @@ using Moq;
 using PokyBack.Rooms.App.Commands;
 using PokyBack.Rooms.App.Handlers;
 using PokyBack.Rooms.Core.Abstractions;
-using PokyBack.Shared.Core.Entities;
 
 namespace PokyBack.Tests.Rooms;
 
@@ -40,37 +39,34 @@ public class AddUserToRoomCommandHandlerTests
             .ReturnsAsync(true);
         
         var successfulCommand = new AddUserToRoomCommand(_targetGuid, _targetUuid, _targetUserName);
-        var unsuccessfulCommand = new AddUserToRoomCommand(Guid.NewGuid(),_targetUuid, string.Empty);
         
         // Act
         var successfulResult = await _handlerTests.Handle(successfulCommand, _cancellationToken);
-        var roomDoesntExist = await _handlerTests.Handle(unsuccessfulCommand, _cancellationToken);
         
         // Assert
         successfulResult.Should().BeTrue();
-        roomDoesntExist.Should().BeFalse();
+        _mockRoomRepository.Verify(r => r.AddUserAsync(_targetGuid, _targetUuid, _targetUserName, _cancellationToken), Times.Once);
     }
 
     /// <summary>
-    /// Handles the AddUserToRoomCommand and attempts to add a user to a room using the IRoomRepository.
+    /// Verifies that when a request to add a user to an unknown room is handled, the operation is not performed.
     /// </summary>
-    /// <param name="request">The AddUserToRoomCommand containing the room ID, user UUID, and username.</param>
-    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
-    /// <returns>False if the repository does not add the user to the room.</returns>
+    /// <returns>False, indicating that the user was not added to the room.</returns>
     [Fact]
     public async Task Handle_WhenRepositoryAddsUserToUnknownRoom_ShouldNotCreatesUser()
     {
         // Arrange
         _mockRoomRepository
             .Setup(r => r.AddUserAsync(_targetGuid, It.IsAny<Guid>(), It.IsAny<string>(), _cancellationToken))
-            .ReturnsAsync(true);
+            .ReturnsAsync(false);
         
-        var unsuccessfulCommand = new AddUserToRoomCommand(Guid.NewGuid(),_targetUuid, string.Empty);
+        var unsuccessfulCommand = new AddUserToRoomCommand(Guid.NewGuid(), _targetUuid, _targetUserName);
         
         // Act
         var roomDoesntExist = await _handlerTests.Handle(unsuccessfulCommand, _cancellationToken);
         
         // Assert
         roomDoesntExist.Should().BeFalse();
+        _mockRoomRepository.Verify(r => r.AddUserAsync(unsuccessfulCommand.RoomId, unsuccessfulCommand.Uuid, unsuccessfulCommand.Username, _cancellationToken), Times.Once);
     }
 }

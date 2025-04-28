@@ -77,4 +77,16 @@ public class RoomRepository(AppDbContext context) : IRoomRepository
 
         return true;
     }
+
+    public async Task<bool> RemoveUserAsync(Guid roomCode, Guid uuid, CancellationToken cancellationToken = default)
+    {
+        var room = await context.Rooms.FirstOrDefaultAsync(r => r.Code == roomCode.ToString(), cancellationToken);
+        if (room is null)
+            return false;
+
+        room.RemoveUser(uuid);
+        await context.SaveChangesAsync(cancellationToken);
+
+        return true;
+    }
 }

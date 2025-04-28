@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PokyBack.Rooms.Core.Abstractions;
+using PokyBack.Shared.Core.Entities;
 using PokyBack.Shared.Infrastructure.Persistence;
 
 namespace PokyBack.Rooms.Infrastructure.Repositories;
@@ -16,5 +17,14 @@ public class RoomUserRepository(AppDbContext context) : IRoomUserRepository
         await context.SaveChangesAsync(cancellationToken);
         
         return true;
+    }
+
+    public async Task<List<RoomUser>> GetRoomUsersAsync(Guid roomCode, CancellationToken cancellationToken = default)
+    {
+        var roomUsers = await context.RoomUsers
+            .Where(s => s.RoomCode == roomCode.ToString())
+            .ToListAsync(cancellationToken);
+        
+        return roomUsers;
     }
 }

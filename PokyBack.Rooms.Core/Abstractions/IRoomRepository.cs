@@ -64,4 +64,13 @@ public interface IRoomRepository
     /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result indicates whether the user was successfully added to the room.</returns>
     public Task<bool> AddUserAsync(Guid roomCode, Guid uuid, string username, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Delete a user from a specific room.
+    /// </summary>
+    /// <param name="roomCode">The unique code of the room.</param>
+    /// <param name="uuid">The unique identifier of the user.</param>
+    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result indicates whether the user was successfully added to the room.</returns>
+    public Task<bool> RemoveUserAsync(Guid roomCode, Guid uuid, CancellationToken cancellationToken = default);
 }

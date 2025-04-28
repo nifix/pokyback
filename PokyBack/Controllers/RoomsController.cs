@@ -16,7 +16,7 @@ public class RoomsController(IMediator mediator) : ControllerBase
         var rooms = await mediator.Send(new GetAllRoomsQuery());
         return Results.Ok(rooms);
     }
-    
+
     /// <summary>
     /// [id].get.ts
     /// </summary>
@@ -38,13 +38,13 @@ public class RoomsController(IMediator mediator) : ControllerBase
     public async Task<IResult> GetRoomByCode(Guid code)
     {
         var room = await mediator.Send(new GetRoomByCodeQuery(code));
-        var result = room is null 
-            ? Results.NotFound() 
+        var result = room is null
+            ? Results.NotFound()
             : Results.Ok(new RoomResponse().LoadFromEntity(room));
-        
+
         return result;
     }
-    
+
     /// <summary>
     /// index.post
     /// </summary>
@@ -58,13 +58,13 @@ public class RoomsController(IMediator mediator) : ControllerBase
         var validationResult = await requestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
             return Results.BadRequest(validationResult.Errors);
-        
+
         // Creating the room
         var room = await mediator.Send(new CreateRoomCommand(request.Username!, request.Uuid ?? Guid.Empty));
 
-        if (room is null) 
+        if (room is null)
             return Results.BadRequest("Something went wrong while creating the room.");
-        
+
         var result = new RoomResponse().LoadFromEntity(room);
         return Results.Created("Created", result);
     }
@@ -83,13 +83,14 @@ public class RoomsController(IMediator mediator) : ControllerBase
         var validationResult = await requestValidator.ValidateAsync(revealStatusRequest);
         if (!validationResult.IsValid)
             return Results.BadRequest(validationResult.Errors);
-        
-        var result= await mediator.Send(new SetRevealStatusCommand(roomCode, revealStatusRequest.RevealStatus!.Value));
+
+        var result = await mediator.Send(new SetRevealStatusCommand(roomCode, revealStatusRequest.RevealStatus!.Value));
         return result ? Results.Ok(result) : Results.BadRequest("Failed to reveal the status");
     }
 
     /// <summary>
     /// Sets the topic for a room.
+    /// [code]/topic.put
     /// </summary>
     /// <param name="topicRequest">The request containing the UUID and topic.</param>
     /// <param name="roomCode">The code of the room to set the topic for.</param>
@@ -101,13 +102,16 @@ public class RoomsController(IMediator mediator) : ControllerBase
         var validationResult = await requestValidator.ValidateAsync(topicRequest);
         if (!validationResult.IsValid)
             return Results.BadRequest(validationResult.Errors);
-        
-        var result= await mediator.Send(new SetTopicCommand(roomCode, topicRequest.Uuid!, topicRequest.Topic ?? string.Empty));;
+
+        var result =
+            await mediator.Send(new SetTopicCommand(roomCode, topicRequest.Uuid!, topicRequest.Topic ?? string.Empty));
+        ;
         return result ? Results.Ok(result) : Results.BadRequest("Failed to update topic");
     }
 
     /// <summary>
     /// Adds a user to a room.
+    /// [code]/users.post
     /// </summary>
     /// <param name="request"></param>
     /// <param name="roomCode"></param>
@@ -120,13 +124,16 @@ public class RoomsController(IMediator mediator) : ControllerBase
         var validationResult = await requestValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
             return Results.BadRequest(validationResult.Errors);
-        
+
         var result = await mediator.Send(new AddUserToRoomCommand(roomCode, request.Uuid, request.Username!));
-        return result ? Results.Created("Added user", result) : Results.BadRequest("Failed to add user, unknown room code");
+        return result
+            ? Results.Created("Added user", result)
+            : Results.BadRequest("Failed to add user, unknown room code");
     }
 
     /// <summary>
     /// Set a user current picked card
+    /// [code]/users.put
     /// </summary>
     /// <param name="request"></param>
     /// <param name="roomCode"></param>
@@ -138,5 +145,26 @@ public class RoomsController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new SetUserCurrentPickCommand(roomCode, userId, request.CurrentPickedCard));
         return result ? Results.Ok(result) : Results.BadRequest("Failed to set current pick");
+    }
+
+    /// <summary>
+    /// Get users from a room
+    /// [code]/users.get
+    /// </summary>
+    /// <param name="roomCode"></param>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    [HttpGet("{roomCode:guid}/users")]
+    public async Task<IResult> GetUsers(Guid roomCode, Guid userId)
+    {
+        var results = await mediator.Send(new GetRoomUsersQuery(roomCode));
+        return Results.Ok(results);
+    }
+
+    [HttpDelete("{roomCode:guid}/users")]
+    public async Task<IResult> DeleteRoomUser(Guid roomCode, Guid userId)
+    {
+        var result = await mediator.Send(new DeleteRoomUserCommand(roomCode, userId));
+        return Results.Ok(result);
     }
 }
